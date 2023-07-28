@@ -5,10 +5,13 @@ import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
@@ -88,15 +91,53 @@ public class TodoList extends Object implements ActionListener{
         }
     }
 
+    /**
+     * 出退勤の記録を一覧表示する。
+     *
+     * @throws IOException ファイル入出力に不具合が生じた場合
+     */
+    public static String printTodoList() 
+        throws IOException {
+
+        try (
+            BufferedReader aReader = new BufferedReader(
+                new InputStreamReader(
+                    new FileInputStream(
+                        new File(TodoList.FILENAME)
+                    ),
+                    TodoList.CSV_ENCODING
+                )
+            )
+        ) {
+            String line = null;
+            String labelText = "<html>";
+
+            while ((line = aReader.readLine()) != null) {
+                labelText += line;
+                labelText += "<br>"; 
+            }
+
+            labelText += "</html>";
+            
+            return labelText;
+
+        } catch (IOException anException) {
+            throw anException;
+        }
+    }
+
     public void actionPerformed(ActionEvent e){
         label.setText(textbox.getText());
         try{
             recordTodolist(textbox.getText());
+            label.setText(printTodoList());
         } catch (IOException anException) {
             System.out.println("エラー：ファイルの入出力で問題が発生しました。");
             anException.printStackTrace();
         }
   
     }
+
+   
     
 }
