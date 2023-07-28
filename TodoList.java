@@ -34,7 +34,8 @@ public class TodoList extends Object implements ActionListener{
      */
     public static final String CSV_ENCODING = "SJIS";
 
-    public void perform() {
+    public void perform() 
+        throws IOException{
 
         // ウィンドウの準備
         JFrame mainFrame = new JFrame("TODO_List");
@@ -48,7 +49,8 @@ public class TodoList extends Object implements ActionListener{
         textbox = new JTextField(40);
 
         label = new JLabel();
-        
+        label.setText(printTodoList());
+
         mainFrame.add(textbox);
         mainFrame.add(button);
         mainFrame.add(label);
@@ -57,13 +59,13 @@ public class TodoList extends Object implements ActionListener{
 
     }
 
-     /**
+    /**
      * TODOリストを記録する。
      *
      * @param 
      * @throws 
      */
-    public static void recordTodolist(String todolist)
+    public void recordTodolist(String todolist)
         throws IOException {
 
         System.out.println(todolist);
@@ -127,9 +129,8 @@ public class TodoList extends Object implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e){
-        label.setText(textbox.getText());
         try{
-            recordTodolist(textbox.getText());
+            this.recordTodolist(textbox.getText());
             label.setText(printTodoList());
         } catch (IOException anException) {
             System.out.println("エラー：ファイルの入出力で問題が発生しました。");
