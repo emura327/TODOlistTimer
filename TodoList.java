@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * やることを保存し時間制限を設けたクラス
@@ -20,6 +22,7 @@ import java.io.OutputStreamWriter;
  * @author E.Ryota
  */
 public class TodoList extends Object implements ActionListener{
+
     JTextField textbox;
     JButton button;
     JLabel label;
@@ -34,13 +37,16 @@ public class TodoList extends Object implements ActionListener{
      */
     public static final String CSV_ENCODING = "SJIS";
 
+    // 日付のフォーマット
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
     public void perform() 
         throws IOException{
 
         // ウィンドウの準備
         JFrame mainFrame = new JFrame("TODO_List");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(800, 200);
+        mainFrame.setSize(800, 800);
         mainFrame.setLayout(new GridLayout(2, 1));
 
         button = new JButton("やること追加");
@@ -68,7 +74,7 @@ public class TodoList extends Object implements ActionListener{
     public void recordTodolist(String todolist)
         throws IOException {
 
-        System.out.println(todolist);
+        todolist += "," + TodoList.dateFormat.format(new Date());
 
         boolean isAppending = true;   // 追記モードでファイルを開く
 
@@ -84,9 +90,9 @@ public class TodoList extends Object implements ActionListener{
             )
         ) {
             aWriter.write(todolist);   // 書き出しを依頼する
-            aWriter.newLine();          // 改行を依頼する
-            aWriter.flush();            // 書き出しを強制的に完了させる
-                                        // close()は不要（try-with-resources文）
+            aWriter.newLine();         // 改行を依頼する
+            aWriter.flush();           // 書き出しを強制的に完了させる
+                                       // close()は不要（try-with-resources文）
 
         } catch (IOException anException) {
             throw anException;              // 呼び出し元にそのまま投げる
@@ -115,7 +121,10 @@ public class TodoList extends Object implements ActionListener{
             String labelText = "<html>";
 
             while ((line = aReader.readLine()) != null) {
-                labelText += line;
+                String[] values = line.split(",");
+                for(String e : values){
+                    labelText += e + " ";
+                }
                 labelText += "<br>"; 
             }
 
