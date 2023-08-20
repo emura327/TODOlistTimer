@@ -142,6 +142,7 @@ public class TodoList extends Object implements ActionListener{
         try{
             this.recordTodolist(textbox.getText());
             label.setText(printTodoList());
+            textbox.setText("");
         } catch (IOException anException) {
             System.out.println("エラー：ファイルの入出力で問題が発生しました。");
             anException.printStackTrace();
