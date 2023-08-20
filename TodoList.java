@@ -149,18 +149,6 @@ public class TodoList extends Object implements ActionListener{
   
     }
 
-    // private ActionListener addToDo = new ActionListener() {
-    //     public void actionPerformed(ActionEvent e) {
-    //         try{
-    //         recordTodolist(textbox.getText());
-    //         label.setText(printTodoList());
-    //     } catch (IOException anException) {
-    //         System.out.println("エラー：ファイルの入出力で問題が発生しました。");
-    //         anException.printStackTrace();
-    //     }
-    //     }
-    // };
-
    
     
 }
