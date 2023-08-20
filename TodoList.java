@@ -53,7 +53,7 @@ public class TodoList extends Object implements ActionListener{
         button.addActionListener(this);
 
         textbox = new JTextField(40);
-        textbox.addActionListener(addToDo);
+        textbox.addActionListener(this);
 
         label = new JLabel();
         label.setText(printTodoList());
@@ -149,17 +149,17 @@ public class TodoList extends Object implements ActionListener{
   
     }
 
-    private ActionListener addToDo = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            try{
-            recordTodolist(textbox.getText());
-            label.setText(printTodoList());
-        } catch (IOException anException) {
-            System.out.println("エラー：ファイルの入出力で問題が発生しました。");
-            anException.printStackTrace();
-        }
-        }
-    };
+    // private ActionListener addToDo = new ActionListener() {
+    //     public void actionPerformed(ActionEvent e) {
+    //         try{
+    //         recordTodolist(textbox.getText());
+    //         label.setText(printTodoList());
+    //     } catch (IOException anException) {
+    //         System.out.println("エラー：ファイルの入出力で問題が発生しました。");
+    //         anException.printStackTrace();
+    //     }
+    //     }
+    // };
 
    
     
