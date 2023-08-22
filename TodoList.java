@@ -155,7 +155,7 @@ public class TodoList extends Object implements ActionListener{
         throws IOException{
 
         int listNumber = Integer.parseInt(listNum);
-        boolean isAppending = false;   // ファイルの最後に書き出す
+        boolean notAppending = false;   // ファイルの最後に書き出す
 
         try (
             BufferedReader aReader = new BufferedReader(
@@ -183,7 +183,7 @@ public class TodoList extends Object implements ActionListener{
                         new OutputStreamWriter(
                             new FileOutputStream(
                                 new File(TodoList.FILENAME),
-                                isAppending
+                                notAppending
                             ),
                             TodoList.CSV_ENCODING
                         )
