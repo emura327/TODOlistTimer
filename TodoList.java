@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Date;
 public class TodoList extends Object implements ActionListener{
 
     JTextField textbox;
-    JButton button;
+    JButton addButton,finishButton;
     JLabel label;
 
     /**
@@ -49,8 +50,11 @@ public class TodoList extends Object implements ActionListener{
         mainFrame.setSize(800, 800);
         mainFrame.setLayout(new GridLayout(2, 1));
 
-        button = new JButton("やること追加");
-        button.addActionListener(this);
+        addButton = new JButton("やること追加");
+        addButton.addActionListener(this);
+
+        finishButton = new JButton("<html>完了ボタン<br>(テキストボックスに消したい項目の番号を入力してください)</html>");
+        finishButton.addActionListener(this);
 
         textbox = new JTextField(40);
         textbox.addActionListener(this);
@@ -59,7 +63,8 @@ public class TodoList extends Object implements ActionListener{
         label.setText(printTodoList());
 
         mainFrame.add(textbox);
-        mainFrame.add(button);
+        mainFrame.add(addButton);
+        mainFrame.add(finishButton);
         mainFrame.add(label);
         // ウィンドウの表示
         mainFrame.setVisible(true);
@@ -101,12 +106,13 @@ public class TodoList extends Object implements ActionListener{
     }
 
     /**
-     * 出退勤の記録を一覧表示する。
+     * todoリストの表示
      *
      * @throws IOException ファイル入出力に不具合が生じた場合
      */
     public static String printTodoList() 
         throws IOException {
+            
 
         try (
             BufferedReader aReader = new BufferedReader(
@@ -120,9 +126,12 @@ public class TodoList extends Object implements ActionListener{
         ) {
             String line = null;
             String labelText = "<html>";
+            int number = 1;
 
             while ((line = aReader.readLine()) != null) {
                 String[] values = line.split(",");
+                labelText += number + " ";
+                number++;
                 for(String e : values){
                     labelText += e + " ";
                 }
@@ -138,18 +147,90 @@ public class TodoList extends Object implements ActionListener{
         }
     }
 
+    /**
+     * 終了したToDoリストの項目を消すメソッド
+     * @throws IOException
+     */
+    public void finishTodoList(String listNum) 
+        throws IOException{
+
+        int listNumber = Integer.parseInt(listNum);
+        boolean isAppending = false;   // ファイルの最後に書き出す
+
+        try (
+            BufferedReader aReader = new BufferedReader(
+                new InputStreamReader(
+                    new FileInputStream(
+                        new File(TodoList.FILENAME)
+                    ),
+                    TodoList.CSV_ENCODING
+                )
+            )
+            ){
+                String line = null;
+                ArrayList<String> toDoList = new ArrayList<String>();
+                int listindex = 1;
+
+                while ((line = aReader.readLine()) != null) {
+                    if(listindex != listNumber){
+                        toDoList.add(line);
+                    }
+                    listindex++;
+                }
+
+                try (
+                    BufferedWriter aWriter = new BufferedWriter(
+                        new OutputStreamWriter(
+                            new FileOutputStream(
+                                new File(TodoList.FILENAME),
+                                isAppending
+                            ),
+                            TodoList.CSV_ENCODING
+                        )
+                    )
+                ){
+                    for(String l:toDoList){
+                        aWriter.write(l);// 書き出しを依頼する
+                        aWriter.newLine();         // 改行を依頼する
+                    }
+                    aWriter.flush();           // 書き出しを強制的に完了させるaWriter.
+                } catch (IOException anException) {
+                    throw anException;
+                }
+
+
+            } catch (IOException anException) {
+                throw anException;
+            }
+    }
+
     public void actionPerformed(ActionEvent e){
-        try{
-            this.recordTodolist(textbox.getText());
-            label.setText(printTodoList());
-            textbox.setText("");
-        } catch (IOException anException) {
-            System.out.println("エラー：ファイルの入出力で問題が発生しました。");
-            anException.printStackTrace();
+        if (textbox.getText() != null) {
+            if(e.getSource() == addButton || e.getSource() == textbox){
+                try{
+                    this.recordTodolist(textbox.getText());
+                    label.setText(printTodoList());
+                    textbox.setText("");
+                } catch (IOException anException) {
+                    System.out.println("エラー：ファイルの入出力で問題が発生しました。");
+                    anException.printStackTrace();
+                }
+            }
+            if (e.getSource() == finishButton) {
+                try{
+                    this.finishTodoList(textbox.getText());
+                    label.setText(printTodoList());
+                    textbox.setText("");
+                }catch (IOException anException){
+                    System.out.println("エラー：ファイルの入出力で問題が発生しました。");
+                    anException.printStackTrace();
+                }
+        } else {
+            System.out.println("エラーa");
         }
-  
     }
 
    
     
+}
 }
